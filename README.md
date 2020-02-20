@@ -94,7 +94,7 @@ settings by placing additional files in a `settings.d` directory:
 
 ```python
 import os.path
-from flexi_settings.loaders import include_dir
+from flexi_settings import include_dir
 include_dir(os.path.join(os.path.dirname(__file__), 'settings.d'))
 ```
 
