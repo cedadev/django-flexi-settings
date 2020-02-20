@@ -5,6 +5,7 @@ Module defining built-in settings loaders.
 import importlib.util
 import pathlib
 import pkg_resources
+import re
 
 
 class NoAvailableLoader(RuntimeError):
@@ -68,7 +69,17 @@ def merge_settings(settings, overrides):
     """
     Deep-merge overrides into settings.
     """
+    # Normalise the keys in the overrides
+    normalised = dict()
     for key, value in overrides.items():
+        # First, convert camelCase to camel_Case
+        key = re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', key)
+        # Then replace one or more dashes with a single underscore
+        key = re.sub(r'-+', '_', key)
+        # Then convert to uppercase
+        normalised[key.upper()] = value
+    # Then merge the normalised items into the given settings
+    for key, value in normalised.items():
         if isinstance(value, dict):
             merge_settings(settings.setdefault(key, {}), value)
         else:
@@ -81,7 +92,8 @@ def load_yaml(path, settings):
 
     The YAML file should contain a dictionary, which is merged with the existing settings.
 
-    The dictionary keys can be UPPER_CASE, lower_case or snakeCase, and are normalised to UPPER_CASE.
+    The dictionary keys can be UPPER_SNAKE_CASE, lower_snake_case or camelCase, and are
+    normalised to UPPER_SNAKE_CASE.
     """
     import yaml
     with open(path, 'r') as fh:
@@ -96,7 +108,8 @@ def load_json(path, settings):
 
     The JSON file should contain an object, which is merged with the existing settings.
 
-    The object keys can be UPPER_CASE, lower_case or snakeCase, and are normalised to UPPER_CASE.
+    The object keys can be UPPER_SNAKE_CASE, lower_snake_case or camelCase, and are
+    normalised to UPPER_SNAKE_CASE.
     """
     import json
     with open(path, 'r') as fh:
