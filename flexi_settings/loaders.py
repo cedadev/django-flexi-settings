@@ -3,6 +3,7 @@ Module defining built-in settings loaders.
 """
 
 import importlib.util
+import inspect
 import pathlib
 import pkg_resources
 import re
@@ -27,24 +28,30 @@ def get_available_loaders(entry_point = 'flexi_settings.loaders'):
     return loaders
 
 
-def include(path, settings):
+def include(path, settings = None):
     """
     Includes the given settings file and merges into the given settings.
     """
+    # First, get the loader for the path
     path = pathlib.Path(path)
     try:
         loader = get_available_loaders()[path.suffix]
     except KeyError:
         raise NoAvailableLoader(path)
-    else:
-        loader(path, settings)
+    # If no settings were given, use the globals of the caller
+    if settings is None:
+        settings = inspect.stack()[1].frame.f_globals
+    loader(path, settings)
 
 
-def include_dir(path, settings):
+def include_dir(path, settings = None):
     """
     Includes each settings file from the given directory, in lexicographical order,
     and merges them into the given settings.
     """
+    # If no settings were given, use the globals of the caller
+    if settings is None:
+        settings = inspect.stack()[1].frame.f_globals
     path = pathlib.Path(path)
     # Iterate the files in the directory and attempt to load each one
     for item in sorted(path.iterdir()):
