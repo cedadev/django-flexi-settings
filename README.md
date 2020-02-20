@@ -93,9 +93,9 @@ the following file could be used as `DJANGO_FLEXI_SETTINGS_ROOT` to allow drop-i
 settings by placing additional files in a `settings.d` directory:
 
 ```python
-import os.path
+from pathlib import Path
 from flexi_settings import include_dir
-include_dir(os.path.join(os.path.dirname(__file__), 'settings.d'))
+include_dir(Path(__file__).resolve().parent / 'settings.d')
 ```
 
 This makes for a very flexible configuration system for Django that is not application-specific.
@@ -104,7 +104,7 @@ This makes for a very flexible configuration system for Django that is not appli
 
 `django-flexi-settings` makes adding new loaders for additional file types very easy.
 
-A loader in `django-flexi-settings` is just a function with that takes a file path and a settings
+A loader in `django-flexi-settings` is just a function that takes a file path and a settings
 dictionary and modifies the settings dictionary in a way consistent with the specified file.
 **Note that the existing dictionary is modified, not a new dictionary returned.** Please refer
 to the built-in loaders.
@@ -124,7 +124,7 @@ To register the loader with `django-flexi-settings`, use the entry point:
 ```python
 # mypackage/setup.py
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
 if __name__ == "__main__":
     setup(

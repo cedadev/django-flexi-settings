@@ -7,7 +7,6 @@ import os
 
 from .loaders import include
 
-
 # Include the specified root settings file
 settings_root = os.environ.get('DJANGO_FLEXI_SETTINGS_ROOT', '/etc/django/settings.py')
-include(settings_root, globals())
+include(settings_root)
