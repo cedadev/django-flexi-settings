@@ -99,3 +99,40 @@ include_dir(os.path.join(os.path.dirname(__file__), 'settings.d'))
 ```
 
 This makes for a very flexible configuration system for Django that is not application-specific.
+
+## Adding additional loaders
+
+`django-flexi-settings` makes adding new loaders for additional file types very easy.
+
+A loader in `django-flexi-settings` is just a function with that takes a file path and a settings
+dictionary and modifies the settings dictionary in a way consistent with the specified file.
+**Note that the existing dictionary is modified, not a new dictionary returned.** Please refer
+to the built-in loaders.
+
+To declare the extensions for which the additional loader is valid, add an `extensions` property
+to the loader function:
+
+```python
+def load_ini(path, settings):
+    # ... Do something with path and settings ...
+
+load_ini.extensions = { '.ini' }
+```
+
+To register the loader with `django-flexi-settings`, use the entry point:
+
+```python
+# mypackage/setup.py
+
+from setuptools import setup, find_packages
+
+if __name__ == "__main__":
+    setup(
+        # ... Other setup, e.g. name, requires
+        entry_points = {
+            'flexi_settings.loaders': [
+                'ini = mypackage.flexi_settings:load_ini',
+            ]
+        }
+    )
+```
