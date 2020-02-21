@@ -15,6 +15,7 @@ if __name__ == "__main__":
         use_scm_version = True,
         description = 'Utilities for flexible configuration for Django.',
         long_description = README,
+        long_description_content_type = "text/markdown",
         classifiers = ["Programming Language :: Python"],
         author = 'Matt Pryor',
         author_email = 'matt.pryor@stfc.ac.uk',
