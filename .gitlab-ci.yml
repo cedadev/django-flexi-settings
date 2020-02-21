@@ -13,3 +13,6 @@ pypi:push:
     - twine check dist/*
     # Upload to PyPI
     - twine upload --username "__token__" --password "$PYPI_TOKEN" dist/*
+  # Only upload tags
+  only:
+    - tags
