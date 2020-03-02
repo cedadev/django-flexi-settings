@@ -76,17 +76,7 @@ def merge_settings(settings, overrides):
     """
     Deep-merge overrides into settings.
     """
-    # Normalise the keys in the overrides
-    normalised = dict()
     for key, value in overrides.items():
-        # First, convert camelCase to camel_Case
-        key = re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', key)
-        # Then replace one or more dashes with a single underscore
-        key = re.sub(r'-+', '_', key)
-        # Then convert to uppercase
-        normalised[key.upper()] = value
-    # Then merge the normalised items into the given settings
-    for key, value in normalised.items():
         if isinstance(value, dict):
             merge_settings(settings.setdefault(key, {}), value)
         else:
