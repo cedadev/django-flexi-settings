@@ -14,7 +14,7 @@ class NoAvailableLoader(RuntimeError):
     Raised when asked to load a file with an unknown extension.
     """
     def __init__(self, path):
-        super().__init__(f'No available loader for {path}')
+        super().__init__('No available loader for {path}'.format(path = path))
 
 
 def get_available_loaders(entry_point = 'flexi_settings.loaders'):
