@@ -88,14 +88,11 @@ def load_yaml(path, settings):
     Loads settings from a YAML file and merges with the given settings.
 
     The YAML file should contain a dictionary, which is merged with the existing settings.
-
-    The dictionary keys can be UPPER_SNAKE_CASE, lower_snake_case or camelCase, and are
-    normalised to UPPER_SNAKE_CASE.
     """
     import yaml
     with open(path, 'r') as fh:
         overrides = yaml.safe_load(fh)
-    merge_settings(settings, overrides)
+    merge_settings(settings, overrides or {})
 load_yaml.extensions = { '.yaml', '.yml' }
 
 
@@ -104,12 +101,9 @@ def load_json(path, settings):
     Loads settings from a JSON file and merges with the given settings.
 
     The JSON file should contain an object, which is merged with the existing settings.
-
-    The object keys can be UPPER_SNAKE_CASE, lower_snake_case or camelCase, and are
-    normalised to UPPER_SNAKE_CASE.
     """
     import json
     with open(path, 'r') as fh:
         overrides = json.load(fh)
-    merge_settings(settings, overrides)
+    merge_settings(settings, overrides or {})
 load_json.extensions = { '.json' }
