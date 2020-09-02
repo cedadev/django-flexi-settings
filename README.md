@@ -48,8 +48,10 @@ If the included files are Python, they can modify existing variables:
 INSTALLED_APPS += ['extra_app1', 'extra_app2']
 ```
 
-For YAML and JSON files, keys are normalised and dictionaries are merged in the
-resulting settings, e.g. for these two YAML files:
+Any assignments will overwrite the existing value of the variable.
+
+For YAML and JSON files, dictionaries are merged in the resulting settings,
+e.g. for these two YAML files:
 
 ```yaml
 # /path/to/yamlfile1.yaml
@@ -59,9 +61,9 @@ DICT_SETTING:
   KEY2: value2
 
 # /path/to/yamlfile2.yaml
-dictSetting:
-  key1: overridden
-  key3: value3
+DICT_SETTING:
+  KEY1: overridden
+  KEY3: value3
 ```
 
 the resulting settings would be:
@@ -77,7 +79,6 @@ DICT_SETTING = {
 
 ### Using the settings module
 
-In the case where your settings are defined in a file that isn't on the `PYTHONPATH`,
 `django-flexi-settings` provides a module that can be used as the `DJANGO_SETTINGS_MODULE`.
 This module respects the value of an environment variable, `DJANGO_FLEXI_SETTINGS_ROOT`,
 that determines the settings file to include. It defaults to `/etc/django/settings.py`.
@@ -95,6 +96,7 @@ settings by placing additional files in a `settings.d` directory:
 ```python
 from pathlib import Path
 from flexi_settings import include_dir
+
 include_dir(Path(__file__).resolve().parent / 'settings.d')
 ```
 
