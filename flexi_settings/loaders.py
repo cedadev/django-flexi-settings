@@ -44,7 +44,7 @@ def include(path, settings = None):
     loader(path, settings)
 
 
-def include_dir(path, settings = None):
+def include_dir(path, ignore_dotfiles = True, settings = None):
     """
     Includes each settings file from the given directory, in lexicographical order,
     and merges them into the given settings.
@@ -55,6 +55,10 @@ def include_dir(path, settings = None):
     path = pathlib.Path(path)
     # Iterate the files in the directory and attempt to load each one
     for item in sorted(path.iterdir()):
+        # If requested, ignore any dotfiles
+        if item.name.startswith(".") and ignore_dotfiles:
+            continue
+        # Support nested directories
         if item.is_dir():
             include_dir(item, settings)
         else:
