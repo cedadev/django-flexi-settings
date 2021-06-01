@@ -52,7 +52,7 @@ def include_dir(path, ignore_dotfiles=True, settings=None):
             continue
         # Support nested directories
         if item.is_dir():
-            include_dir(item, settings)
+            include_dir(item, ignore_dotfiles, settings)
         else:
             include(item, settings)
 
