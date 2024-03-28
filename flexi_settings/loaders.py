@@ -1,11 +1,8 @@
 """
 Module defining built-in settings loaders.
 """
-
-import importlib.util
 import inspect
 import pathlib
-import re
 
 import pkg_resources
 
