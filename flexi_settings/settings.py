@@ -1,6 +1,7 @@
 """
-Module that can be used as the DJANGO_SETTINGS_MODULE to import settings
-from a file. That file can then include other files as it chooses.
+Module that can be used as the DJANGO_SETTINGS_MODULE to import settings from a file.
+
+That file can then include other files as it chooses.
 """
 
 import os

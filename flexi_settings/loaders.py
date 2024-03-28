@@ -1,6 +1,5 @@
-"""
-Module defining built-in settings loaders.
-"""
+"""Module defining built-in settings loaders."""
+
 import inspect
 import pathlib
 
@@ -8,18 +7,14 @@ import pkg_resources
 
 
 class NoAvailableLoader(RuntimeError):
-    """
-    Raised when asked to load a file with an unknown extension.
-    """
+    """Raise when asked to load a file with an unknown extension."""
 
     def __init__(self, path):
         super().__init__(f"No available loader for {path}")
 
 
 def get_available_loaders(entry_point="flexi_settings.loaders"):
-    """
-    Discovers the available loaders using the given entry point.
-    """
+    """Discover the available loaders using the given entry point."""
     loaders = {}
     for entry_point in pkg_resources.iter_entry_points(entry_point):
         loader = entry_point.load()
@@ -28,15 +23,13 @@ def get_available_loaders(entry_point="flexi_settings.loaders"):
 
 
 def include(path, settings=None):
-    """
-    Includes the given settings file and merges into the given settings.
-    """
+    """Include the given settings file and merge into the given settings."""
     # First, get the loader for the path
     path = pathlib.Path(path)
     try:
         loader = get_available_loaders()[path.suffix]
-    except KeyError:
-        raise NoAvailableLoader(path)
+    except KeyError as err:
+        raise NoAvailableLoader(path) from err
     # If no settings were given, use the globals of the caller
     if settings is None:
         settings = inspect.stack()[1].frame.f_globals
@@ -44,9 +37,9 @@ def include(path, settings=None):
 
 
 def include_dir(path, settings=None):
-    """
-    Includes each settings file from the given directory, in lexicographical order,
-    and merges them into the given settings.
+    """Include each settings file from the given directory, in lexicographical order.
+
+    Then merge them into the given settings.
     """
     # If no settings were given, use the globals of the caller
     if settings is None:
@@ -58,11 +51,9 @@ def include_dir(path, settings=None):
 
 
 def load_python(path, settings):
-    """
-    Loads settings from a Python file and merges with the given settings.
-    """
-    with open(path, "r") as fh:
-        code = compile(fh.read(), path, mode="exec")
+    """Load settings from a Python file and merge with the given settings."""
+    with open(path, "r", encoding="utf-8") as file:
+        code = compile(file.read(), path, mode="exec")
     # Override __file__ for the duration of the exec
     old_file = settings.get("__file__")
     settings["__file__"] = str(path)
@@ -74,9 +65,7 @@ load_python.extensions = {".py", ".conf"}
 
 
 def merge_settings(settings, overrides):
-    """
-    Deep-merge overrides into settings.
-    """
+    """Deep-merge overrides into settings."""
     for key, value in overrides.items():
         if isinstance(value, dict):
             merge_settings(settings.setdefault(key, {}), value)
@@ -85,15 +74,15 @@ def merge_settings(settings, overrides):
 
 
 def load_yaml(path, settings):
-    """
-    Loads settings from a YAML file and merges with the given settings.
+    """Load settings from a YAML file and merge with the given settings.
 
-    The YAML file should contain a dictionary, which is merged with the existing settings.
+    The YAML file should contain a dictionary, which is merged with the
+    existing settings.
     """
     import yaml
 
-    with open(path, "r") as fh:
-        overrides = yaml.safe_load(fh)
+    with open(path, "r", encoding="utf-8") as file:
+        overrides = yaml.safe_load(file)
     merge_settings(settings, overrides or {})
 
 
@@ -101,15 +90,14 @@ load_yaml.extensions = {".yaml", ".yml"}
 
 
 def load_json(path, settings):
-    """
-    Loads settings from a JSON file and merges with the given settings.
+    """Load settings from a JSON file and merge with the given settings.
 
     The JSON file should contain an object, which is merged with the existing settings.
     """
     import json
 
-    with open(path, "r") as fh:
-        overrides = json.load(fh)
+    with open(path, "r", encoding="utf-8") as file:
+        overrides = json.load(file)
     merge_settings(settings, overrides or {})
 
 
