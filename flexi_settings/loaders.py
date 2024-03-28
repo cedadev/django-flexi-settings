@@ -5,30 +5,32 @@ Module defining built-in settings loaders.
 import importlib.util
 import inspect
 import pathlib
-import pkg_resources
 import re
+
+import pkg_resources
 
 
 class NoAvailableLoader(RuntimeError):
     """
     Raised when asked to load a file with an unknown extension.
     """
+
     def __init__(self, path):
-        super().__init__(f'No available loader for {path}')
+        super().__init__(f"No available loader for {path}")
 
 
-def get_available_loaders(entry_point = 'flexi_settings.loaders'):
+def get_available_loaders(entry_point="flexi_settings.loaders"):
     """
     Discovers the available loaders using the given entry point.
     """
     loaders = {}
     for entry_point in pkg_resources.iter_entry_points(entry_point):
         loader = entry_point.load()
-        loaders.update({ ext: loader for ext in loader.extensions })
+        loaders.update({ext: loader for ext in loader.extensions})
     return loaders
 
 
-def include(path, settings = None):
+def include(path, settings=None):
     """
     Includes the given settings file and merges into the given settings.
     """
@@ -44,7 +46,7 @@ def include(path, settings = None):
     loader(path, settings)
 
 
-def include_dir(path, settings = None):
+def include_dir(path, settings=None):
     """
     Includes each settings file from the given directory, in lexicographical order,
     and merges them into the given settings.
@@ -62,14 +64,16 @@ def load_python(path, settings):
     """
     Loads settings from a Python file and merges with the given settings.
     """
-    with open(path, 'r') as fh:
-        code = compile(fh.read(), path, mode = 'exec')
+    with open(path, "r") as fh:
+        code = compile(fh.read(), path, mode="exec")
     # Override __file__ for the duration of the exec
-    old_file = settings.get('__file__')
-    settings['__file__'] = str(path)
+    old_file = settings.get("__file__")
+    settings["__file__"] = str(path)
     exec(code, settings)
-    settings['__file__'] = old_file
-load_python.extensions = { '.py', '.conf' }
+    settings["__file__"] = old_file
+
+
+load_python.extensions = {".py", ".conf"}
 
 
 def merge_settings(settings, overrides):
@@ -90,10 +94,13 @@ def load_yaml(path, settings):
     The YAML file should contain a dictionary, which is merged with the existing settings.
     """
     import yaml
-    with open(path, 'r') as fh:
+
+    with open(path, "r") as fh:
         overrides = yaml.safe_load(fh)
     merge_settings(settings, overrides or {})
-load_yaml.extensions = { '.yaml', '.yml' }
+
+
+load_yaml.extensions = {".yaml", ".yml"}
 
 
 def load_json(path, settings):
@@ -103,7 +110,10 @@ def load_json(path, settings):
     The JSON file should contain an object, which is merged with the existing settings.
     """
     import json
-    with open(path, 'r') as fh:
+
+    with open(path, "r") as fh:
         overrides = json.load(fh)
     merge_settings(settings, overrides or {})
-load_json.extensions = { '.json' }
+
+
+load_json.extensions = {".json"}

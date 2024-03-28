@@ -17,6 +17,12 @@ json = "flexi_settings.loaders:load_json"
 python = "^3.6"
 pyyaml = "^6.0.1"
 
+[tool.black]
+target-version = ['py36', 'py37', 'py38', 'py39', 'py310', 'py311', 'py312']
+
+[tool.isort]
+profile = "black"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
