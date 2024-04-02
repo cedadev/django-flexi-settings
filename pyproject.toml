@@ -8,6 +8,10 @@ readme = "README.md"
 homepage = "https://github.com/cedadev/django-flexi-settings"
 keywords = ["django", "flexible", "settings"]
 
+packages = [
+    { include = "flexi_settings"},
+]
+
 [tool.poetry.plugins."flexi_settings.loaders"]
 python = "flexi_settings.loaders:load_python"
 yaml = "flexi_settings.loaders:load_yaml"
