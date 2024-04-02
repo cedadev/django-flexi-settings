@@ -1,9 +1,9 @@
 """Module defining built-in settings loaders."""
 
+import importlib.metadata
 import inspect
+import json
 import pathlib
-
-import pkg_resources
 
 
 class NoAvailableLoader(RuntimeError):
@@ -16,8 +16,8 @@ class NoAvailableLoader(RuntimeError):
 def get_available_loaders(entry_point="flexi_settings.loaders"):
     """Discover the available loaders using the given entry point."""
     loaders = {}
-    for entry_point in pkg_resources.iter_entry_points(entry_point):
-        loader = entry_point.load()
+    for point in importlib.metadata.entry_points().select(group=entry_point):
+        loader = point.load()
         loaders.update({ext: loader for ext in loader.extensions})
     return loaders
 
@@ -94,8 +94,6 @@ def load_json(path, settings):
 
     The JSON file should contain an object, which is merged with the existing settings.
     """
-    import json
-
     with open(path, "r", encoding="utf-8") as file:
         overrides = json.load(file)
     merge_settings(settings, overrides or {})
